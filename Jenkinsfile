@@ -2,12 +2,26 @@
 
 @Library('jenkins-shared') _
 
-def packageJSON = readJSON(file: 'package.json')
+pipeline{
+    agent any
 
-def component = "cart"
-def packageVersion = packageJSON.version
+    parameters { 
+        string(name: "PackageVersion",description: "Version of the build", defaultValue: "1")
+    }
+    
 
-echo "$component ........... $packageVersion"
+    stages{
+        stage("reading package"){
+            def packageJSON = readJSON(file: 'package.json')
+            def component = "cart"
+            ${params.PackageVersion} = packageJSON.version
+        }
+    }
+}
+
+
+
+echo "$component ........... ${params.PackageVersion}"
 
 if ( ! env.BRANCH_NAME.equalsIgnoreCase('master')){
     build.build(compnent)
